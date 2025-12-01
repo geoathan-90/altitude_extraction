@@ -154,7 +154,7 @@ def write_dxf(
     if not marks_with_alt.empty:
         v_range = profile["altitude_x10"].max() - profile["altitude_x10"].min()
         # Reasonable default text height relative to the profile size
-        text_height = v_range * 0.015 if v_range > 0 else 20.0
+        text_height = 20 #v_range * 0.015 if v_range > 0 else 20.0
 
         tick_height = float(marks_with_alt["tick_height"].iloc[0])
 
