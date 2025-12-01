@@ -1,10 +1,12 @@
 import pandas as pd
 import ezdxf
 from pathlib import Path
+from typing import List, Tuple
+
 
 # --- paths ---
 INPUT_PROFILE = Path("data.txt")       # longitudinal profile source
-INPUT_LENGTHS = Path("lengths.csv")    # marks: we will use the 3rd column
+INPUT_LENGTHS = Path("lengths.csv")    # segment lengths + names
 OUTPUT_DXF = Path("mikotomi.dxf")
 OUTPUT_CSV = Path("mikotomi.csv")
 
@@ -25,7 +27,7 @@ def load_profile(path: Path) -> pd.DataFrame:
     # distance is in km -> convert to meters
     clean["distance_m"] = clean[dist_col] * 1000.0
 
-    # scale altitude to make the DXF nicer (same as your previous logic)
+    # scale altitude to make the DXF nicer (same as before)
     clean["altitude_x10"] = clean[alt_col] * 10.0
 
     profile = clean[["distance_m", "altitude_x10"]].copy()
@@ -34,30 +36,41 @@ def load_profile(path: Path) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------
-# 2. Load mark positions from lengths.csv (3rd column)
+# 2. Load mark positions + names from lengths.csv
 # ---------------------------------------------------------
-def load_mark_stations(path: Path) -> pd.Series:
+def load_marks(path: Path) -> pd.DataFrame:
     """
-    Reads lengths.csv and returns a Series of *cumulative* station distances in meters.
-    The 3rd column is interpreted as segment lengths (in meters), and we take cumsum.
+    Reads lengths.csv and returns a DataFrame with:
+      - station_m: cumulative station distances in meters
+      - name: label for each station (from the last column)
+
+    Assumptions:
+      - 3rd column = segment length in meters (e.g. 60.19, 225, 310, ...)
+      - last column = name (label) for that station
     """
     df = pd.read_csv(path)
 
-    if df.shape[1] < 3:
-        raise ValueError("lengths.csv must have at least 3 columns.")
+    if df.shape[1] < 4:
+        raise ValueError("lengths.csv must have at least 4 columns (including 'name').")
 
-    length_col = df.columns[2]  # 3rd column: segment length in meters
+    length_col = df.columns[2]   # 3rd column: segment length in meters
+    name_col = "name"    # last column: label
 
-    # Convert to float and build cumulative distances:
-    # [60.19, 225.00, 310.00, ...]  ->  [60.19, 285.19, 595.19, ...]
     segment_lengths = df[length_col].astype(float)
     stations_m = segment_lengths.cumsum()
-    stations_m.name = "station_m"
-    return stations_m
+
+    marks = pd.DataFrame(
+        {
+            "station_m": stations_m,
+            "name": df[name_col].astype(str).fillna(""),
+        }
+    )
+
+    return marks
 
 
 # ---------------------------------------------------------
-# 3. Find the altitude on the profile at each station
+# 3. Altitude + mark geometry
 # ---------------------------------------------------------
 def get_altitude_at(profile: pd.DataFrame, station_m: float) -> float:
     """
@@ -69,36 +82,50 @@ def get_altitude_at(profile: pd.DataFrame, station_m: float) -> float:
     return float(profile.loc[idx, "altitude_x10"])
 
 
-def build_mark_segments(
+def build_mark_geometry(
     profile: pd.DataFrame,
-    stations_m: pd.Series,
+    marks: pd.DataFrame,
     tick_height: float | None = None,
-) -> list[tuple[tuple[float, float], tuple[float, float]]]:
+) -> Tuple[List[Tuple[Tuple[float, float], Tuple[float, float]]], pd.DataFrame]:
     """
-    Returns a list of segments [((x1,y1),(x2,y2)), ...] for short vertical
-    marks centered on the profile line at each station.
+    For each mark, compute:
+      - short vertical segment ((x1,y1),(x2,y2))
+      - altitude_x10 at that x
+
+    Returns:
+      segments: list of ((x1,y1),(x2,y2))
+      marks_with_alt: marks DataFrame with extra 'altitude_x10' and 'tick_height'
     """
     if tick_height is None:
         # 2% of total vertical range as a small mark
         v_range = profile["altitude_x10"].max() - profile["altitude_x10"].min()
-        tick_height = 250 #v_range * 0.02 if v_range > 0 else 20.0
+        tick_height = 500 #v_range * 0.02 if v_range > 0 else 20.0
 
     half_h = tick_height / 2.0
-    segments = []
+    segments: List[Tuple[Tuple[float, float], Tuple[float, float]]] = []
 
-    for s in stations_m:
-        y = get_altitude_at(profile, s)
-        segments.append(((s, y - half_h), (s, y + half_h)))
+    altitudes = []
+    for station_m in marks["station_m"]:
+        y = get_altitude_at(profile, station_m)
+        altitudes.append(y)
+        segments.append(((station_m, y - half_h), (station_m, y + half_h)))
 
-    return segments
+    marks_with_alt = marks.copy()
+    marks_with_alt["altitude_x10"] = altitudes
+    marks_with_alt["tick_height"] = tick_height
+
+    return segments, marks_with_alt
 
 
 # ---------------------------------------------------------
-# 4. Build DXF: profile polyline + marks
+# 4. Build DXF: profile polyline + marks + labels
 # ---------------------------------------------------------
-def write_dxf(profile: pd.DataFrame,
-              mark_segments: list[tuple[tuple[float, float], tuple[float, float]]],
-              path: Path) -> None:
+def write_dxf(
+    profile: pd.DataFrame,
+    mark_segments: List[Tuple[Tuple[float, float], Tuple[float, float]]],
+    marks_with_alt: pd.DataFrame,
+    path: Path,
+) -> None:
     doc = ezdxf.new("R2010")
     msp = doc.modelspace()
 
@@ -107,6 +134,8 @@ def write_dxf(profile: pd.DataFrame,
         doc.layers.add("profile_polyline", color=7)
     if "profile_marks" not in doc.layers:
         doc.layers.add("profile_marks", color=1)
+    if "profile_mark_labels" not in doc.layers:
+        doc.layers.add("profile_mark_labels", color=3)
 
     # Profile polyline (distance_m vs altitude_x10)
     pts = list(
@@ -117,9 +146,35 @@ def write_dxf(profile: pd.DataFrame,
     )
     msp.add_lwpolyline(pts, dxfattribs={"layer": "profile_polyline"})
 
-    # Vertical marks at stations from lengths.csv
+    # Vertical marks
     for (x1, y1), (x2, y2) in mark_segments:
         msp.add_line((x1, y1), (x2, y2), dxfattribs={"layer": "profile_marks"})
+
+    # Labels at each mark
+    if not marks_with_alt.empty:
+        v_range = profile["altitude_x10"].max() - profile["altitude_x10"].min()
+        # Reasonable default text height relative to the profile size
+        text_height = v_range * 0.015 if v_range > 0 else 20.0
+
+        tick_height = float(marks_with_alt["tick_height"].iloc[0])
+
+        for _, row in marks_with_alt.iterrows():
+            x = float(row["station_m"])
+            y = float(row["altitude_x10"])
+            name = str(row["name"])
+
+            # Place text slightly above the top of the tick
+            text_y = y + tick_height * 0.7
+
+            # Older ezdxf versions: just set the insert point directly
+            msp.add_text(
+                name,
+                dxfattribs={
+                    "layer": "profile_mark_labels",
+                    "height": text_height,
+                    "insert": (x, text_y),  # position of the text baseline
+                },
+            )
 
     doc.saveas(path)
 
@@ -132,17 +187,17 @@ def main():
     profile = load_profile(INPUT_PROFILE)
     profile.to_csv(OUTPUT_CSV, index=False)
 
-    # Load stations from 3rd column of lengths.csv
-    stations = load_mark_stations(INPUT_LENGTHS)
+    # Load stations + names from lengths.csv
+    marks = load_marks(INPUT_LENGTHS)
 
     # Build short vertical marks at those stations
-    mark_segments = build_mark_segments(profile, stations)
+    mark_segments, marks_with_alt = build_mark_geometry(profile, marks)
 
     # Write DXF
-    write_dxf(profile, mark_segments, OUTPUT_DXF)
+    write_dxf(profile, mark_segments, marks_with_alt, OUTPUT_DXF)
 
     print(f"Wrote profile CSV -> {OUTPUT_CSV.resolve()}")
-    print(f"Wrote DXF with marks -> {OUTPUT_DXF.resolve()}")
+    print(f"Wrote DXF with marks + labels -> {OUTPUT_DXF.resolve()}")
 
 
 if __name__ == "__main__":
