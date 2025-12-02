@@ -10,13 +10,13 @@
 
 4a) Toolbox -> Points to path, create a line layer
 
-4b) Toolbox -> Explode lines (ie break up the line in segments)
+4b) Toolbox -> Explode Lines (ie break up the line into line segments)
 
 4c) Toolbox -> Add geometry attributes (ie length) to the exploded lines
 
 4d) Save what's produced as "lengths.csv"
 
-4e) Make sure to add a "name" column somewhere with the tower names
+4e) Make sure to add a "name" column somewhere (the tower names, copy-paste them if you need to)
 
 4f) drop the csv here
 
