@@ -8,9 +8,22 @@
 
 4) Repurpose coordinates to EPSG:2100 by saving as geopackage (not as kml)
 
-5) Toolbox -> add points along geometry (1m should be enough)
+4a) Toolbox -> Points to path, create a line layer
 
-6) save the resulting layer as a KML with EPSG:4236 (or whatever) coordinates
+4b) Toolbox -> Explode lines (ie break up the line in segments)
+
+4c) Toolbox -> Add geometry attributes (ie length) to the exploded lines
+
+4d) Save what's produced as "lengths.csv"
+
+4e) Make sure to add a "name" column somewhere with the tower names
+
+4f) drop the csv here
+
+5) Back to the original unexploded line layer from step 4a
+    Toolbox -> add points along geometry (1m should be enough)
+
+6) save the resulting layer as a KML with EPSG:4326  coordinates (this might actually be optional, but better be safe)
 
 7) import that KML into Google Earth again.
 
