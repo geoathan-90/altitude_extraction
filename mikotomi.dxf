@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461012.5799537036
+2461034.2861689813
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461012.5799537036
+2461034.2861689813
   9
 $TDUUPDATE
  40
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{75B9C100-5781-4688-A09F-6E1BD4C215B4}
+{C3F18BCE-AB8E-4173-A600-2A659D803D75}
   9
 $VERSIONGUID
   2
-{CB8809FC-7904-420E-8E19-86D46985FF37}
+{823498FA-BE46-44ED-A77E-B4195B967F3F}
   9
 $EXTNAMES
 290
@@ -1323,9 +1323,9 @@ ISM
   0
 CLASS
   1
-ACDBPLACEHOLDER
+LAYOUT
   2
-AcDbPlaceHolder
+AcDbLayout
   3
 ObjectDBX Classes
  90
@@ -1339,9 +1339,9 @@ ObjectDBX Classes
   0
 CLASS
   1
-LAYOUT
+ACDBPLACEHOLDER
   2
-AcDbLayout
+AcDbPlaceHolder
   3
 ObjectDBX Classes
  90
@@ -62391,7 +62391,7 @@ AcDbText
  40
 20.0
   1
-KT 24|1
+1
 100
 AcDbText
   0
@@ -62415,7 +62415,7 @@ AcDbText
  40
 20.0
   1
-KT 24|2
+2
 100
 AcDbText
   0
@@ -62439,7 +62439,7 @@ AcDbText
  40
 20.0
   1
-KT 24|3
+3
 100
 AcDbText
   0
@@ -62463,7 +62463,7 @@ AcDbText
  40
 20.0
   1
-KT 24|4
+4
 100
 AcDbText
   0
@@ -62487,7 +62487,7 @@ AcDbText
  40
 20.0
   1
-KT 24|5
+5
 100
 AcDbText
   0
@@ -62511,7 +62511,7 @@ AcDbText
  40
 20.0
   1
-KT 24|6
+6
 100
 AcDbText
   0
@@ -62535,7 +62535,7 @@ AcDbText
  40
 20.0
   1
-KT 24|7
+7
 100
 AcDbText
   0
@@ -62559,7 +62559,7 @@ AcDbText
  40
 20.0
   1
-KT 24|8
+8
 100
 AcDbText
   0
@@ -62583,7 +62583,7 @@ AcDbText
  40
 20.0
   1
-KT 24|9
+9
 100
 AcDbText
   0
@@ -62607,7 +62607,7 @@ AcDbText
  40
 20.0
   1
-KT 24|10
+10
 100
 AcDbText
   0
@@ -62631,7 +62631,7 @@ AcDbText
  40
 20.0
   1
-KT 24|11
+11
 100
 AcDbText
   0
@@ -62655,7 +62655,7 @@ AcDbText
  40
 20.0
   1
-KT 24|12
+12
 100
 AcDbText
   0
@@ -62679,7 +62679,7 @@ AcDbText
  40
 20.0
   1
-KS 1
+13
 100
 AcDbText
   0
@@ -62703,7 +62703,7 @@ AcDbText
  40
 20.0
   1
-KS 2
+14
 100
 AcDbText
   0
@@ -62727,7 +62727,7 @@ AcDbText
  40
 20.0
   1
-KS 3
+15
 100
 AcDbText
   0
@@ -62751,7 +62751,7 @@ AcDbText
  40
 20.0
   1
-KS 4
+16
 100
 AcDbText
   0
@@ -62775,7 +62775,7 @@ AcDbText
  40
 20.0
   1
-KS 5
+17
 100
 AcDbText
   0
@@ -62799,7 +62799,7 @@ AcDbText
  40
 20.0
   1
-KS 6
+18
 100
 AcDbText
   0
@@ -62823,7 +62823,7 @@ AcDbText
  40
 20.0
   1
-KS 7
+19
 100
 AcDbText
   0
@@ -62847,7 +62847,7 @@ AcDbText
  40
 20.0
   1
-KS 8
+20
 100
 AcDbText
   0
@@ -62871,7 +62871,7 @@ AcDbText
  40
 20.0
   1
-KS 9
+21
 100
 AcDbText
   0
@@ -62895,7 +62895,7 @@ AcDbText
  40
 20.0
   1
-KS 10
+22
 100
 AcDbText
   0
@@ -62919,7 +62919,7 @@ AcDbText
  40
 20.0
   1
-KS 11
+23
 100
 AcDbText
   0
@@ -62943,7 +62943,7 @@ AcDbText
  40
 20.0
   1
-KS 12
+24
 100
 AcDbText
   0
@@ -62967,7 +62967,7 @@ AcDbText
  40
 20.0
   1
-KS 13
+25
 100
 AcDbText
   0
@@ -62991,7 +62991,7 @@ AcDbText
  40
 20.0
   1
-KS 14
+26
 100
 AcDbText
   0
@@ -63015,7 +63015,7 @@ AcDbText
  40
 20.0
   1
-KS 15
+27
 100
 AcDbText
   0
@@ -63039,7 +63039,7 @@ AcDbText
  40
 20.0
   1
-KS 16
+28
 100
 AcDbText
   0
@@ -63063,7 +63063,7 @@ AcDbText
  40
 20.0
   1
-KS 17
+29
 100
 AcDbText
   0
@@ -63087,7 +63087,7 @@ AcDbText
  40
 20.0
   1
-KS 18
+30
 100
 AcDbText
   0
@@ -63111,7 +63111,7 @@ AcDbText
  40
 20.0
   1
-KS 19
+31
 100
 AcDbText
   0
@@ -63135,7 +63135,7 @@ AcDbText
  40
 20.0
   1
-KS 20
+32
 100
 AcDbText
   0
@@ -63159,7 +63159,7 @@ AcDbText
  40
 20.0
   1
-KS 21
+33
 100
 AcDbText
   0
@@ -63183,7 +63183,7 @@ AcDbText
  40
 20.0
   1
-KS 22
+34
 100
 AcDbText
   0
@@ -63207,7 +63207,7 @@ AcDbText
  40
 20.0
   1
-KS 23
+35
 100
 AcDbText
   0
@@ -63231,7 +63231,7 @@ AcDbText
  40
 20.0
   1
-KS 24
+36
 100
 AcDbText
   0
@@ -63255,7 +63255,7 @@ AcDbText
  40
 20.0
   1
-KS 25
+37
 100
 AcDbText
   0
@@ -63279,7 +63279,7 @@ AcDbText
  40
 20.0
   1
-KS 26
+38
 100
 AcDbText
   0
@@ -63303,7 +63303,7 @@ AcDbText
  40
 20.0
   1
-KS 27
+39
 100
 AcDbText
   0
@@ -63327,7 +63327,7 @@ AcDbText
  40
 20.0
   1
-KS 28
+40
 100
 AcDbText
   0
@@ -63351,7 +63351,7 @@ AcDbText
  40
 20.0
   1
-KS 29
+41
 100
 AcDbText
   0
@@ -63375,7 +63375,7 @@ AcDbText
  40
 20.0
   1
-KS 30
+42
 100
 AcDbText
   0
@@ -63399,7 +63399,7 @@ AcDbText
  40
 20.0
   1
-KS 31
+43
 100
 AcDbText
   0
@@ -63423,7 +63423,7 @@ AcDbText
  40
 20.0
   1
-KS 32
+44
 100
 AcDbText
   0
@@ -63447,7 +63447,7 @@ AcDbText
  40
 20.0
   1
-KS 33
+45
 100
 AcDbText
   0
@@ -63471,7 +63471,7 @@ AcDbText
  40
 20.0
   1
-KS 34
+46
 100
 AcDbText
   0
@@ -63495,7 +63495,7 @@ AcDbText
  40
 20.0
   1
-KS 35
+47
 100
 AcDbText
   0
@@ -63519,7 +63519,7 @@ AcDbText
  40
 20.0
   1
-KS 36
+48
 100
 AcDbText
   0
@@ -63543,7 +63543,7 @@ AcDbText
  40
 20.0
   1
-KS 37
+49
 100
 AcDbText
   0
@@ -63567,7 +63567,7 @@ AcDbText
  40
 20.0
   1
-KS 38
+50
 100
 AcDbText
   0
@@ -63591,7 +63591,7 @@ AcDbText
  40
 20.0
   1
-KS 39
+51
 100
 AcDbText
   0
@@ -64597,7 +64597,7 @@ DictionaryVariables
 280
 0
   1
-1.4.3 @ 2025-12-02T13:55:08.005945+00:00
+1.4.3 @ 2025-12-24T06:52:05.360341+00:00
   0
 DICTIONARYVAR
   5
@@ -64609,7 +64609,7 @@ DictionaryVariables
 280
 0
   1
-1.4.3 @ 2025-12-02T13:55:08.610250+00:00
+1.4.3 @ 2025-12-24T06:52:05.868928+00:00
   0
 ENDSEC
   0

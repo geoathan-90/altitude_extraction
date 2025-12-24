@@ -64,35 +64,72 @@ def load_profile(path):
 # 2. Load mark positions + names from lengths.csv
 # ---------------------------------------------------------
 def load_marks(path):
+    """
+    Read segment lengths from lengths.csv and build "stations" (cumulative distances).
+
+    Expected input:
+      - A column that contains segment lengths in meters.
+        The easiest is to name it "length", but we also accept headers that include the word "length".
+
+    Optional input:
+      - A "name" column for labeling each mark (e.g., tower names).
+        If the column is missing (Step 4e skipped) OR a specific row is blank/NaN,
+        we fall back to simple numbering: "1", "2", "3", ...
+    """
 
     df = pd.read_csv(path)
 
-    length_col = "length" #df.columns[2]
-    name_col = "name"
+    # --- Find the length column (prefer exact 'length', else any column containing 'length') ---
+    length_col = None
+    for col in df.columns:
+        if str(col).strip().lower() == "length":
+            length_col = col
+            break
+    if length_col is None:
+        for col in df.columns:
+            if "length" in str(col).lower():
+                length_col = col
+                break
+    if length_col is None:
+        raise ValueError(
+            "Could not find a length column in lengths.csv. "
+            "Please include a column named 'length' (meters), or at least a header containing the word 'length'."
+        )
 
-    segment_lengths = df[length_col].tolist()
+    # --- 'name' is optional ---
+    name_col = "name" if "name" in df.columns else None
 
-    station_values = []   # will hold cumulative distances, ie the spans between towers
-    running_total = 0.0   # overall line length (by the end of the loop)
+    station_values = []
+    name_values = []
+    running_total = 0.0
 
-    for value in segment_lengths:
-        length_m = float(value)
-        running_total += length_m
+    # Process row-by-row so names always align with the corresponding station.
+    for _, row in df.iterrows():
+
+        length_val = row[length_col]
+
+        if pd.isna(length_val):
+            # A missing length breaks the station chain, so treat it as an input error.
+            raise ValueError(f"Missing segment length in column '{length_col}'.")
+
+        running_total += float(length_val)
         station_values.append(running_total)
 
-    # --- Build the list of names, turning NaN into empty strings ---
-    name_values = []
-    for value in df[name_col]:
-        name_values.append(str(value))
+        # Default label is 1-based index (as a string).
+        default_label = str(len(station_values))
 
-    # Create the marks DataFrame.
-    marks = pd.DataFrame(
-        {
-            "station_m": station_values,
-            "name": name_values,
-        }
-    )
+        if name_col is None:
+            # Step 4e was skipped: generate simple numbering.
+            name_values.append(default_label)
+        else:
+            # Use provided name if present; otherwise fall back to numbering for that row.
+            raw_name = row[name_col]
+            if pd.isna(raw_name) or str(raw_name).strip() == "":
+                name_values.append(default_label)
+            else:
+                name_values.append(str(raw_name).strip())
 
+    marks = pd.DataFrame({"station_m": station_values, "name": name_values})
     return marks
 
 
